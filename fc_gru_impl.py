@@ -92,7 +92,7 @@ class CustomGRU(nn.Module):
 
         keys = list(state_dict)
         for i in range(self.num_layers):
-            self.gru[i].set_weights(*map(state_dict.get, keys[4 * i : 4 * (i + 1)]))
+            self.gru[i].set_weights(*map(state_dict.get, keys[4 * i: 4 * (i + 1)]))
         ...
 
 
@@ -105,7 +105,7 @@ def main():
     gru2.set_weights(gru1.state_dict())
 
     xt = torch.randn(batch_size, time_steps, input_size)
-    ht1 = torch.randn(num_layers, batch_size, hidden_size)
+    ht1 = torch.zeros(num_layers, batch_size, hidden_size)
     ht2 = ht1.clone()
 
     out1_list, out2_list = [], []
@@ -119,7 +119,10 @@ def main():
 
     out1 = torch.cat(out1_list, dim=1)
     out2 = torch.cat(out2_list, dim=1)
+    out3, _ = gru1(xt)
+
     torch.testing.assert_close(out1, out2)
+    torch.testing.assert_close(out1, out3)
     ...
 
 

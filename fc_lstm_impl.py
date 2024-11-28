@@ -88,7 +88,7 @@ class CustomLSTM(nn.Module):
 
         keys = list(state_dict)
         for i in range(self.num_layers):
-            self.lstm[i].set_weights(*map(state_dict.get, keys[4 * i : 4 * (i + 1)]))
+            self.lstm[i].set_weights(*map(state_dict.get, keys[4 * i: 4 * (i + 1)]))
         ...
 
 
@@ -101,8 +101,8 @@ def main():
     lstm2.set_weights(lstm1.state_dict())
 
     xt = torch.randn(batch_size, time_steps, input_size)
-    ht1 = torch.randn(num_layers, batch_size, hidden_size)
-    ct1 = torch.randn(num_layers, batch_size, hidden_size)
+    ht1 = torch.zeros(num_layers, batch_size, hidden_size)
+    ct1 = torch.zeros(num_layers, batch_size, hidden_size)
     ht2 = ht1.clone()
     ct2 = ct1.clone()
 
@@ -117,7 +117,10 @@ def main():
 
     out1 = torch.cat(out1_list, dim=1)
     out2 = torch.cat(out2_list, dim=1)
+    out3, _ = lstm1(xt)
+
     torch.testing.assert_close(out1, out2)
+    torch.testing.assert_close(out1, out3)
     ...
 
 
